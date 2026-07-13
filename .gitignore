@@ -1,0 +1,14 @@
+*.pt
+*.pth
+*.onnx
+*.torchscript
+runs/
+dataset/
+data/
+cccd-training-data/
+cccd-training-output/
+roboflow-cccd-dataset/
+debug/
+outputs/
+__pycache__/
+*.py[cod]
