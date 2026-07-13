@@ -1,0 +1,13 @@
+#For Jupyter
+!pip install roboflow
+
+from roboflow import Roboflow
+rf = Roboflow(api_key="l4SVet9xUqNdTOTThixC")
+project = rf.workspace("ocrtestingdataset").project("cccd_dataset-xz2sc")
+version = project.version(8)
+dataset = version.download("yolov8")
+
+#for Terminal
+curl -L "https://universe.roboflow.com/ds/GiPlsczwBO?key=YkL3yiZj6H" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip
+#direct link
+https://universe.roboflow.com/ds/GiPlsczwBO?key=YkL3yiZj6H
