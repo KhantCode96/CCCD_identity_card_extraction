@@ -192,17 +192,20 @@ Dataset validation passed.
 After validation, train the detector with:
 
 ```bash
-python tools/train_yolov8_cccd_colab.py \
-  --mount-drive \
-  --project-root /content/drive/MyDrive/YOLOV8-VIET_OCR \
-  --data-yaml /content/drive/MyDrive/YOLOV8-VIET_OCR/CCCD_dataset-8/data.yaml \
-  --output-root /content/drive/MyDrive/cccd-training-output \
+%cd "/content/drive/MyDrive/YOLOV8-VIET_OCR"
+
+!python tools/train_yolov8_cccd_colab.py \
+  --project-root "/content/drive/MyDrive/YOLOV8-VIET_OCR" \
+  --data-yaml "/content/drive/MyDrive/YOLOV8-VIET_OCR/CCCD_dataset-8/data.yaml" \
+  --output-root "/content/drive/MyDrive/YOLOV8-VIET_OCR/training_output/18_7_baseline" \
   --model yolov8s.pt \
+  --name 18_7_yolov8s_baseline \
   --img-size 640 \
   --epochs 100 \
   --batch 16 \
   --patience 20 \
-  --test
+  --device 0 \
+  --skip-install
 ```
 
 The training script:
