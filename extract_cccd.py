@@ -341,23 +341,77 @@ def extract_cccd(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Extract id, birth, and name from Vietnamese CCCD cards.")
-    parser.add_argument("--image", required=True, type=Path, help="Path to a CCCD card image.")
-    parser.add_argument("--weights", required=True, type=Path, help="Path to trained YOLOv8 weights.")
-    parser.add_argument("--conf", default=0.25, type=float, help="YOLO confidence threshold.")
-    parser.add_argument("--iou", default=0.5, type=float, help="YOLO NMS IoU threshold.")
-    parser.add_argument("--padding", default=0.05, type=float, help="Padding ratio added around field crops.")
-    parser.add_argument("--warp-width", default=856, type=int, help="Warped CCCD image width.")
-    parser.add_argument("--warp-height", default=540, type=int, help="Warped CCCD image height.")
-    parser.add_argument("--ocr-device", default="auto", help="VietOCR device: auto, cpu, cuda:0, ...")
-    parser.add_argument("--beamsearch", action="store_true", help="Enable VietOCR beam search.")
-    parser.add_argument("--save-debug", type=Path, help="Optional path to save detected field overlay.")
-    parser.add_argument(
-    "--ocr-device",
-    default="auto",
-    help="VietOCR device: auto, cpu, cuda:0, ...",
-)
+    parser = argparse.ArgumentParser(
+        description=(
+            "Extract id, birth, and name from Vietnamese CCCD cards."
+        )
+    )
 
+    parser.add_argument(
+        "--image",
+        required=True,
+        type=Path,
+        help="Path to a CCCD card image.",
+    )
+    parser.add_argument(
+        "--weights",
+        required=True,
+        type=Path,
+        help="Path to trained YOLOv8 weights.",
+    )
+    parser.add_argument(
+        "--conf",
+        default=0.25,
+        type=float,
+        help="YOLO confidence threshold.",
+    )
+    parser.add_argument(
+        "--iou",
+        default=0.5,
+        type=float,
+        help="YOLO NMS IoU threshold.",
+    )
+    parser.add_argument(
+        "--padding",
+        default=0.05,
+        type=float,
+        help="Padding ratio added around field crops.",
+    )
+    parser.add_argument(
+        "--warp-width",
+        default=856,
+        type=int,
+        help="Warped CCCD image width.",
+    )
+    parser.add_argument(
+        "--warp-height",
+        default=540,
+        type=int,
+        help="Warped CCCD image height.",
+    )
+    parser.add_argument(
+        "--ocr-device",
+        default="auto",
+        help="VietOCR device: auto, cpu, cuda:0, ...",
+    )
+    parser.add_argument(
+        "--ocr-weights",
+        default=DEFAULT_VIETOCR_WEIGHTS,
+        help=(
+            "VietOCR weights URL or local .pth path. "
+            "Defaults to the official vgg-transformer weights."
+        ),
+    )
+    parser.add_argument(
+        "--beamsearch",
+        action="store_true",
+        help="Enable VietOCR beam search.",
+    )
+    parser.add_argument(
+        "--save-debug",
+        type=Path,
+        help="Optional path to save detected field overlay.",
+    )
 parser.add_argument(
     "--ocr-weights",
     default=DEFAULT_VIETOCR_WEIGHTS,
