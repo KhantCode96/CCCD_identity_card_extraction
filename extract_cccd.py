@@ -346,7 +346,6 @@ def main() -> None:
             "Extract id, birth, and name from Vietnamese CCCD cards."
         )
     )
-
     parser.add_argument(
         "--image",
         required=True,
@@ -411,21 +410,8 @@ def main() -> None:
         "--save-debug",
         type=Path,
         help="Optional path to save detected field overlay.",
-    )
-    parser.add_argument(
-        "--ocr-weights",
-        default=DEFAULT_VIETOCR_WEIGHTS,
-        help=(
-            "VietOCR weights URL or local .pth path. "
-            "Defaults to the official vgg-transformer weights."
-        ),
-    )
-    
-    parser.add_argument(
-        "--beamsearch",
-        action="store_true",
-        help="Enable VietOCR beam search.",
-    )
+    )    
+
     args = parser.parse_args()
 
     result = extract_cccd(
