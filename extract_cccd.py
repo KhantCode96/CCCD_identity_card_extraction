@@ -412,20 +412,20 @@ def main() -> None:
         type=Path,
         help="Optional path to save detected field overlay.",
     )
-parser.add_argument(
-    "--ocr-weights",
-    default=DEFAULT_VIETOCR_WEIGHTS,
-    help=(
-        "VietOCR weights URL or local .pth path. "
-        "Defaults to the official vgg-transformer weights."
-    ),
-)
-
-parser.add_argument(
-    "--beamsearch",
-    action="store_true",
-    help="Enable VietOCR beam search.",
-)
+    parser.add_argument(
+        "--ocr-weights",
+        default=DEFAULT_VIETOCR_WEIGHTS,
+        help=(
+            "VietOCR weights URL or local .pth path. "
+            "Defaults to the official vgg-transformer weights."
+        ),
+    )
+    
+    parser.add_argument(
+        "--beamsearch",
+        action="store_true",
+        help="Enable VietOCR beam search.",
+    )
     args = parser.parse_args()
 
     result = extract_cccd(
