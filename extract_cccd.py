@@ -20,6 +20,10 @@ FIELD_CLASSES = ("id", "birth", "name")
 CORNER_CLASSES = ("top_left", "top_right", "bottom_right", "bottom_left")
 REQUIRED_CLASSES = FIELD_CLASSES + CORNER_CLASSES
 
+DEFAULT_VIETOCR_WEIGHTS = (
+    "https://vocr.vn/data/vietocr/vgg_transformer.pth"
+)
+
 CLASS_ALIASES = {
     "identity_number": "id",
     "identity number": "id",
@@ -59,15 +63,34 @@ class Detection:
 
 
 class VietOCRReader:
-    def __init__(self, device: str = "auto", beamsearch: bool = False) -> None:
+    def __init__(
+        self,
+        device: str = "auto",
+        beamsearch: bool = False,
+        weights: str | Path = DEFAULT_VIETOCR_WEIGHTS,
+    ) -> None:
         if device == "auto":
             device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
+        weights_value = str(weights)
+
+        # VietOCR accepts either an HTTP URL or a local weights path.
+        if not weights_value.startswith(("http://", "https://")):
+            weights_path = Path(weights_value).expanduser()
+
+            if not weights_path.is_file():
+                raise FileNotFoundError(
+                    f"VietOCR weights not found: {weights_path}"
+                )
+
+            weights_value = str(weights_path)
+
         config = Cfg.load_config_from_name("vgg_transformer")
-        config["weights"] = "https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA"
+        config["weights"] = weights_value
         config["cnn"]["pretrained"] = False
         config["device"] = device
         config["predictor"]["beamsearch"] = beamsearch
+
         self.predictor = Predictor(config)
 
     def read(self, crop_bgr: np.ndarray) -> str:
@@ -243,6 +266,7 @@ def extract_cccd(
     warp_width: int,
     warp_height: int,
     ocr_device: str,
+    ocr_weights: str | Path,
     beamsearch: bool,
     save_debug: Path | None,
 ) -> dict[str, Any]:
@@ -266,7 +290,11 @@ def extract_cccd(
     else:
         working_image = cv2.warpPerspective(image_bgr, matrix, (warp_width, warp_height))
 
-    reader = VietOCRReader(device=ocr_device, beamsearch=beamsearch)
+    reader = VietOCRReader(
+    device=ocr_device,
+    beamsearch=beamsearch,
+    weights=ocr_weights,
+)
     raw_text: dict[str, str] = {}
     output: dict[str, str] = {}
 
@@ -324,6 +352,26 @@ def main() -> None:
     parser.add_argument("--ocr-device", default="auto", help="VietOCR device: auto, cpu, cuda:0, ...")
     parser.add_argument("--beamsearch", action="store_true", help="Enable VietOCR beam search.")
     parser.add_argument("--save-debug", type=Path, help="Optional path to save detected field overlay.")
+    parser.add_argument(
+    "--ocr-device",
+    default="auto",
+    help="VietOCR device: auto, cpu, cuda:0, ...",
+)
+
+parser.add_argument(
+    "--ocr-weights",
+    default=DEFAULT_VIETOCR_WEIGHTS,
+    help=(
+        "VietOCR weights URL or local .pth path. "
+        "Defaults to the official vgg-transformer weights."
+    ),
+)
+
+parser.add_argument(
+    "--beamsearch",
+    action="store_true",
+    help="Enable VietOCR beam search.",
+)
     args = parser.parse_args()
 
     result = extract_cccd(
@@ -335,6 +383,7 @@ def main() -> None:
         warp_width=args.warp_width,
         warp_height=args.warp_height,
         ocr_device=args.ocr_device,
+        ocr_weights=args.ocr_weights,
         beamsearch=args.beamsearch,
         save_debug=args.save_debug,
     )
